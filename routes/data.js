@@ -67,14 +67,29 @@ router.get("/conditioned-apartment", async (req,res)=>{
     check_condition("price", true, "=");
 
     // adding order
-    if (req.query["order"]) {
-        request_string = request_string.concat(` ORDER BY ${req.query["order"]}`);
 
-        // being descending
-        if (req.query["desc"] && req.query["desc"] === '1') {
-            request_string = request_string.concat(" DESC");
-            console.log(request_string);
+    // if (req.query["order"]) {
+    //     request_string = request_string.concat(` ORDER BY ${req.query["order"]}`);
+    // }
+
+    let order_index = 0;
+    while (true) { // ORDER BY s.t (DESC), s.t (DESC) ...
+        if (req.query[`order-${order_index}`]) {
+            if (order_index === 0) { // first order item
+                request_string = request_string.concat(` ORDER BY ${req.query[`order-${order_index}`]}`);
+            } else {
+                request_string = request_string.concat(` , ${req.query[`order-${order_index}`]}`);
+            }
+
+            if (req.query[`desc-${order_index}`] === "1") {
+                request_string = request_string.concat(" DESC");
+            }
+
+            order_index++;
+            continue;
         }
+
+        break;
     }
 
     // limited selection

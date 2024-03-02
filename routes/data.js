@@ -62,7 +62,32 @@ router.get("/conditioned-apartment", async (req,res)=>{
     check_condition("max-price", true, "<", "price");
     check_condition("price", true, "=");
 
-    res.send((await client.query(request_string)).rows);
+    // adding order
+    if (req.query["order"]) {
+        request_string = request_string.concat(` ORDER BY ${req.query["order"]}`);
+
+        // being descending
+        if (req.query["desc"] && req.query["desc"] === '1') {
+            request_string = request_string.concat(" DESC");
+            console.log(request_string);
+        }
+    }
+
+    // limited selection
+    if (req.query["limit"]) {
+        request_string = request_string.concat(` LIMIT ${req.query["limit"]}`);
+
+        // offset selection
+        if (req.query["offset"]) {
+            request_string = request_string.concat(` OFFSET ${req.query["offset"]}`);
+        }
+    }
+
+    try {
+        res.send((await client.query(request_string)).rows);
+    } catch (e) {
+        res.send(e);
+    }
 });
 
 module.exports = router;

@@ -12,14 +12,18 @@ router.get("/conditioned-apartment", async (req,res)=>{
     let request_string = "SELECT * FROM apartments";
     let is_first_condition = true;
 
-    const check_condition = (condition_name, is_number = false, comparison_sign = "=", query_name = undefined) => {
-        if (query_name === undefined) query_name = condition_name;
+    const check_condition = (condition_name, is_number = false, comparison_sign = "=") => {
         if (req.query[condition_name]) {
             let value = undefined;
             if (is_number) {
                 value = String(req.query[condition_name]);
             } else {
                 value = `'${req.query[condition_name]}'`
+            }
+
+            let query_name = condition_name;
+            if (comparison_sign !== "=") { // the sign being in comparison
+                query_name = query_name.replace("min-","").replace("max-","");
             }
 
             request_string = request_string.concat(` ${is_first_condition ? "WHERE" : "AND"} ${query_name} ${comparison_sign} ${value}`);
@@ -36,16 +40,16 @@ router.get("/conditioned-apartment", async (req,res)=>{
 
     check_condition("title", false, "=");
 
-    check_condition("min-rate", true, ">", "rate");
+    check_condition("min-rate", true, ">");
     check_condition("rate", true, "=",);
 
-    check_condition("min-guests", true, ">", "guests");
+    check_condition("min-guests", true, ">");
     check_condition("guests", true, "=");
 
-    check_condition("min-bedroom", true, ">", "bedroom");
+    check_condition("min-bedroom", true, ">");
     check_condition("bedroom", true, "=");
 
-    check_condition("min-bathroom", true, ">", "bathroom");
+    check_condition("min-bathroom", true, ">");
     check_condition("bathroom", true, "=");
 
     check_condition("type", true, "=");
@@ -58,8 +62,8 @@ router.get("/conditioned-apartment", async (req,res)=>{
 
     check_condition("instant_book", true, "=");
 
-    check_condition("min-price", true, ">", "price");
-    check_condition("max-price", true, "<", "price");
+    check_condition("min-price", true, ">");
+    check_condition("max-price", true, "<");
     check_condition("price", true, "=");
 
     // adding order

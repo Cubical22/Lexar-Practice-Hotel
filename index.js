@@ -3,6 +3,8 @@ const app = express();
 const http = require("http").Server(app);
 const data = require("./routes/data");
 
+app.use(express.urlencoded({extended: true}));
+
 // routes: 1. the display 2. data
 
 // 2.

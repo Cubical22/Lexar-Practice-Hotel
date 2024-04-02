@@ -31,13 +31,6 @@ router.get("/conditioned-apartment", async (req,res)=>{
         }
     }
 
-    if (req.query["id"]) { // having the id means not needing anything else
-        request_string = request_string.concat(` hotel_id='${req.query["id"]}'`);
-        res.send((await client.query(request_string)).rows);
-        console.log(request_string);
-        return;
-    }
-
     check_condition("title", false, "=");
 
     check_condition("min-rate", true, ">");
@@ -107,6 +100,14 @@ router.get("/conditioned-apartment", async (req,res)=>{
     } catch (e) {
         res.send(e);
     }
+});
+
+router.get("/house-by-id/:id", async (req,res)=>{
+    const id = req.params.id;
+    const request_string = `SELECT * FROM apartments WHERE hotel_id='${id}'`;
+    const hotel = (await client.query(request_string)).rows[0];
+
+    res.send(hotel);
 });
 
 module.exports = router;

@@ -49,7 +49,8 @@ router.get("/conditioned-apartment", async (req,res)=>{
 
     check_condition("geo", false, "=");
 
-    check_condition("location", false, "=");
+    check_condition("lat", true, "=");
+    check_condition("lng", true, "=");
     
     check_condition("free_cancellation", true, "=");
 
